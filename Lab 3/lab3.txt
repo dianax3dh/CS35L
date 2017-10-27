@@ -1,0 +1,76 @@
+Install coreutils
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz
+To download the file
+
+tar -xzvf coreutils-7.6.tar.gz
+-x:to extract
+-z:compress archive
+-v:displays progress while creating archive
+-f:allows specification of filename of archive
+
+cd coreutils-7.6.
+
+less INSTALL
+To read how to install it
+
+./configure --prefix="/u/eng/class/classdho/coreutils-7.6/tempDirec"
+Found ./configure --prefix=PREFIX(a pathname)
+	The temporary directory is tempDirec.
+
+make
+To compile package
+
+make install
+To install
+
+export LC_ALL='en_US.UTF-8'
+To change the en_US.UTF-8 locale
+
+./tempDirec/bin/ls -l
+./src/ls -l
+The ls in both are buggy
+They both show the unwated results:
+-rw-r--r--  1 classdho class    7658 2009-09-01 04:01 TODO
+
+emacs bradyPatch
+To apply Brady's Patch; copy and pasted the patch from assignment
+link.
+
+patch -p1 < bradyPatch
+man patch to learn that -p1 strips first leading slashes from
+a/src/ls.c b/src/ls.c.
+It gives me this error: 
+     patching file NEWS
+     patch: **** malformed patch at line 11: outline -*-
+I remove the outline -*-
+
+patch -p1 <bradyPatch
+Do this again and it works
+
+make
+Ran make again to build the fixed version
+Only the ls.c files were modified
+
+After patching, both versions of ls are as follows:
+./src/ls -l now gives: (the patched one)
+-rw-r--r--  1 classdho class    7658 Sep  1  2009 TODO
+
+./tempDirec/bin/ls -l gives: (the buggy one)
+-rw-r--r--  1 classdho class    7658 2009-09-01 04:01 TODO
+
+touch testFile
+Created a test file 
+
+touch testFile -t 201501122300 
+-t lets you modify the time; YEARMONTHDAYTIME
+I made it be dated Jan 12 2015 23hours
+
+This was the result:
+-rw-r--r--  1 classdho class       0 Jan 12  2015 testFile
+
+It differs from the rest which looked like this:
+drwxr-xr-x  2 classdho class    8192 Oct 16 23:40 po
+
+Running ls with a new file differs from a file older than 1 
+year, in which files more than a year old have no time
+stamp, as seen above.

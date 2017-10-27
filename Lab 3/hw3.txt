@@ -1,0 +1,44 @@
+Q1. Brady's patch remove the line "case_long_iso_time_style:",
+because looking at the patch, the line was also removed in the
+for loop seen at "-goto case_long_iso_time_style;". Since that line
+was removed, the "case_long_iso_time_style:" is no longer needed,
+hence it was removed, even though it's not necessary since it would
+not have been called on. 
+
+Q2. If my company adopts this patched version of Coreutils 
+instead of the default one, some troubles we'd run into if users do
+not speak English or understand the formatting, are that the date
+is formatted differently at MM/DD/YY, but in some countries it is
+formatted as DD/MM/YY, and the month is written in English in the
+patched version of Coreutils. 
+
+Q3. python randline.py /dev/null
+ When the script is invoked on an empty file like /dev/null, it 
+gives this error:  
+Traceback (most recent call last):
+  File "randline.py", line 70, in <module>
+    main()
+  File "randline.py", line 64, in main
+    sys.stdout.write(generator.chooseline())
+  File "randline.py", line 34, in chooseline
+    return random.choice(self.lines)
+  File "/System/Library/Frameworks/Python.framework/
+Versions/2.7/lib/python2.7/random.py", line 275, in choice
+    return seq[int(self.random() * len(seq))]  
+# raises IndexError if seq is empty
+IndexError: list index out of range
+This is because there are no lines for it to randomly select 
+from, making the "self.lines" from line 34 empty, so it is
+unable to "chooseLine" from line 64. 
+
+Q4. When this script is invoked with Python 3 rather than Python 2, and why?
+Running the script with Python 3 gave this error:
+  File "randline.py", line 65
+    except IOError as (errno, strerror):
+                      ^
+SyntaxError: invalid syntax
+The error is due to a difference in syntax between
+Python 3 and Python 2, or any other older versions of Python.
+To fix this error, the correct syntax is
+except IOError as err:
+       errno, strerror = err.args
