@@ -1,0 +1,117 @@
+locale to check for 'C'
+export LC_ALL='C' to set attribute
+
+Sort contents of given file into another file:
+sort -o words /usr/share/dict/words on SEASnet GNU/Linux
+
+Get HTML of assignment:
+curl http://web.cs.ucla.edu/classes/fall17/cs35L/index.html >webpage.html.
+
+tr -c 'A-Za-z' '[\n*]' < webpage.html
+Changes every non-alphabet character into a newline;
+     tr -c translates the complement of 'A-Za-z'
+     ‘[\n*]’ means newline
+     tr -c 'A-Za-z' '[\n*]' translate the complement of the first set
+into the second set.
+
+tr -cs 'A-Za-z' '[\n*]' < webpage.html | sort -u 
+does the same as the previous but the piped sort -u gets rid of duplicates.
+
+tr -cs 'A-Za-z' '[\n*]' < webpage.html | sort -u | comm - words 
+comm - words comapres webpage.html to words
+three columns: 1 (unique to webpage.html)
+2(unique to words)
+3(are in both) 
+
+tr -cs 'A-Za-z' '[\n*]' < webpage.html | sort -u | comm -23 - words
+-23 suppresses columns 2 and 3
+only column 1 words, words only from webpage.html are shown
+
+buildwords:
+use -o from grep to extract words only 
+grep -o '<td>.*</td>' | 
+
+treats uppercase as lowercase
+tr "A-Z" 'a-z'|
+
+changes ` to '
+sed "s/\`/\'/g" | 
+
+remove <u> </u> tag 
+sed 's/<u>//g' |
+
+sed 's/<\/u>//g' |
+
+remove <td> tages
+sed 's/<td>//g' |
+
+sed 's/<\/td>//g' |
+
+remove empty lines
+sed '/^$/d' |
+
+print only even number lines (removes English words)
+awk 'NR % 2 == 0' |
+
+spaces into newlines
+tr " " "\n" |
+
+remove commas since the spaces dealt with the newlines 
+sed 's/,//g' |
+
+remove empty lines again to get rid of any leftovers
+sed '/^$/d' |
+
+remove non-hawaiian words after all that above has been done; ^ is like not !
+sed "/[^pk'mnwlhaeiou]/d" |
+
+sort the words and gets rid of duplicates
+sort -u
+
+Spell checker: 
+Misspelled Hawaiian words: 405
+cat webpage.html | tr ‘A-Z’ ‘a-z’ | tr -cs 'A-Za-z' '[\n*]' |
+sort -u | comm -23 - hwords | wc -l
+    tr ‘A-Z’ ‘a-z’ changes upper case input into lower case 
+    comm - words compares words between assign2.html and hwords
+    wc -l counts misspelled Hawaiian words 
+    There are 406 - 1 = 405 misspelled Hawaiian words; 
+    minus 1 because of the empty line in the beginning
+
+Misspelled English words: 38
+cat webpage.html | tr ‘A-Z’ ‘a-z’ | tr -cs 'A-Za-z' '[\n*]' |
+sort -u | comm -23 - words | wc -l
+    change upper to lower case
+    compares words on webpage.html with words from words 
+    comm -23 only shows words from webpage.html 
+    wc -l counts misspelled words
+    There are 39 - 1 = 38 misspelled words;
+     minus 1 because there is an empty line in the beginning
+
+Misspelled as English, but not Hawaiian: 3  
+cat misspelledEnglish | tr 'A-Z' 'a-z' | tr -cs 'A-Za-z' '[\n*]' |
+sort -u | comm -12 - hwords
+    comm -12 suppresses columns 1 and 2
+    column that misspelledEnglish and hwords have in common left; 
+    misspelled English Hawaiian words
+    Some examples are halau, lau, and wiki 
+
+Misspelled as Hawaiian, but not English: 370
+cat misspelledHawaiian | tr 'A-Z' 'a-z' | tr -cs 'A-Za-z' '[\n*]' |
+sort -u | comm -12 - words | wc -l
+    Some example words are want, we, read, no
+    -12 hides the first (mispelledHawaiian words) and second column (words)
+    Left with third column (mispelledHawaiian words, but not as English)
+    
+cat misspelledHawaiian | tr 'A-Z' 'a-z' | tr -cs 'A-Za-z' '[\n*]' |
+sort -u | comm -12 - hwords | wc -l
+    this checks the Hawaiian dictionary on itself;
+    counts 0 misspelled words, so it is correct
+
+
+
+
+
+
+
+
