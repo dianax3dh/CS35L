@@ -1,0 +1,197 @@
+1. man -K word
+  
+   Read through man man. 
+
+2. /bin/cp
+   /usr.bin/wc
+   
+   whereis cp
+   whereis wc
+   The TA mentioned a useful command is whereis, so I man whereis to find out what it does.  
+
+3. w - displays who is logged in and what they are doing 
+   [ - condition evacuation utility 
+
+   echo $PATH gives /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+   find /usr/local/bin /usr/bin /bin /usr/sbin /sbin '?'  
+   Read through what the above path outputted for single character executable programs 
+   man w to get what it does
+   man [ tp get what it does
+
+4. /etc/alternative/emacs
+   
+   readlink /usr/bin/emacs 
+
+5. g means group, + means 'to set', s means to set user ID, so g+s means to set the group user ID
+   o means 'other parts of the mode bits', - means 'to clear', x means 'to execute', so o-x means to clear the execution bits of other parts of the mode bits. Read through man chmod
+
+6. find ~/ -mtime -3w
+   Read through man find
+
+7. ./
+   .//junk
+
+   find ./ -type d -mtime -3w 
+   I am currently in the directory that I keep the lab and homework. I will find all of the directories that were modified in the last 3 weeks here, because doing it in my home directory is a lot.  
+
+8. 102 Symbolic links
+/usr/bin/2to3-2.7
+/usr/bin/2to32.6
+/usr/bin/appletviewer
+/usr/bin/apt
+/usr/bin/bzcmp
+/usr/bin/bzless
+/usr/bin/c++
+/usr/bin/captoinfo
+/usr/bin/cc
+/usr/bin/cvaffinity
+/usr/bin/cvcp
+/usr/bin/cvmkdir
+/usr/bin/cvmkfile
+/usr/bin/ex
+/usr/bin/extcheck
+/usr/bin/fontrestore
+/usr/bin/idle2.6
+/usr/bin/idle2.7
+/usr/bin/idlj
+/usr/bin/infotocap
+/usr/bin/jar
+/usr/bin/jarsigner
+/usr/bin/java
+/usr/bin/javac
+/usr/bin/javadoc
+/usr/bin/javah
+/usr/bin/javap
+/usr/bin/javapackager
+/usr/bin/javaws
+/usr/bin/jcmd
+/usr/bin/jconsole
+/usr/bin/jcontrol
+/usr/bin/jdb
+/usr/bin/jdeps
+/usr/bin/jhat
+/usr/bin/jhsdb
+/usr/bin/jimage
+/usr/bin/jinfo
+/usr/bin/jjs
+/usr/bin/jmap
+/usr/bin/jmc
+/usr/bin/jps
+/usr/bin/jrunscript
+/usr/bin/jsadebugd
+/usr/bin/jshell
+/usr/bin/jstack
+/usr/bin/jstat
+/usr/bin/jstatd
+/usr/bin/jvisualvm
+/usr/bin/keytool
+/usr/bin/klist
+/usr/bin/kswitch
+/usr/bin/ldapadd
+/usr/bin/llvm-g++
+/usr/bin/llvm-gcc
+/usr/bin/mailq
+/usr/bin/manpath
+/usr/bin/native2ascii
+/usr/bin/newaliases
+/usr/bin/orbd
+/usr/bin/pack200
+/usr/bin/phar
+/usr/bin/pico
+/usr/bin/policytool
+/usr/bin/pydoc2.6
+/usr/bin/pydoc2.7
+/usr/bin/python2.6
+/usr/bin/python2.6-config
+/usr/bin/python2.7
+/usr/bin/python2.7-config
+/usr/bin/pythonw2.6
+/usr/bin/pythonw2.7
+/usr/bin/qlmanage
+/usr/bin/reset
+/usr/bin/rmic
+/usr/bin/rmid
+/usr/bin/rmiregistry
+/usr/bin/rview
+/usr/bin/rvim
+/usr/bin/safaridriver
+/usr/bin/schemagen
+/usr/bin/sdx
+/usr/bin/serialver
+/usr/bin/servertool
+/usr/bin/slogin
+/usr/bin/smtpd2.6.py
+/usr/bin/smtpd2.7.py
+/usr/bin/snfsdefrag
+/usr/bin/tar
+/usr/bin/tclsh
+/usr/bin/tclsh8.4
+/usr/bin/tclsh8.5
+/usr/bin/tkcon
+/usr/bin/tnameserv
+/usr/bin/unpack200
+/usr/bin/vi
+/usr/bin/view
+/usr/bin/vimdiff
+/usr/bin/wish
+/usr/bin/wsgen
+/usr/bin/wsimport
+/usr/bin/xjc
+
+   Read through man find
+   whereis find
+   find /usr/bin -type l
+
+9. -r--r--r--   1 root  wheel       198 Jul 30  2016 charset.alias
+   cd /usr/lib 
+
+   Read through man ls for ls -trl (t sorts by time modified, r gets the oldest entries first, l lists the output in long format). From discussion, I know that we can combine options of a command. 
+
+10. localedef (defines locale environment)
+
+    man locale
+    man -k locale 
+
+11. M-x Buffer-menu-sort,
+    Bufer-menu-sort-by-column, 
+    ibuffer-invert-sorting, 
+    ibuffer-toggle-sorting-mode, 
+    rmail-sort-by-author, 
+    rmail-sort-by-correspondent, 
+    rmail-sort-by-date, 
+    rmail-sort-by-labels, 
+    rmail-sort-by-lines, 
+    rmail-sort-by-recipient, 
+    rmail-sort-by-subject, 
+    sort-columns, 
+    sort-fields, 
+    sort-lines, 
+    sort-numeic-fields, 
+    sort-pages, 
+    sort-paragraphs, 
+    sort-regexp-fields	
+
+    Read "A Tutorial Introduction to GNU Emacs" to get C-h a. 
+    emacs ENTER C-h a s o r t ENTER C-x o scroll through the buffer window for answer
+
+12. C-M-a moves to the beginning of the current defun
+    C-M-b moves backward over the next sexp
+    C-M-d moves down one level of parens; moves to the right of the next left paren, skipping balanced sexp  
+    C-M-e moves to the end of the current defun
+    C-M-f moves forward over the next sexp
+    C-M-h sets the region around the current defun 
+
+    Read through "A Tutorial Introduction to GNU Emacs" to find answers. 
+
+13. C-g is used to stop commands whether you no longer want it to be executed or it is taking too long to execute. C-g is also used to discard a numerical argument or the beginning of a command that you no longer want to execute.  
+If you have typed an <ESC> by mistake, you can get rid of it with C-g.
+
+14. yank is done by C-y and it yanks what was recently killed. You would typically C-k to kill or "copy" a line and C-y to yank or "paste" it where you want.
+
+15. Difference between the output of ls -l command and the directoy listing of the Emacs dired command is that on the Emacs dired command, the directory listing has some files names listed in color and at the top, it gives the available space left in the directory. 
+    C-x d / u s r / b i n ENTER
+    c d SP / u s r / b i n ENTER  l s SP - l  
+
+
+
+
