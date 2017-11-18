@@ -1,0 +1,163 @@
+Comparing sfrob and sfrobu with multiple lines:
+1 line
+  sfrob:
+  real	0m0.002s
+  user	0m0.001s
+  sys	0m0.000s
+
+  sfrobu:
+  real	0m0.002s
+  user	0m0.001s
+  sys	0m0.000s
+
+10 lines: 
+   sfrob:
+   real	0m0.002s
+   user	0m0.000s
+   sys	0m0.001s
+
+   sfrobu: 
+   real	   0m0.002s
+   user	   0m0.000s
+   sys	   0m0.002s
+
+100 Lines:
+    sfrob:
+    real   0m0.002s
+    user   0m0.000s
+    sys    0m0.002s
+
+    sfrobu:
+    real   0m0.007s
+    user   0m0.000s
+    sys    0m0.006s
+1,000 Lines:
+    sfrob:
+    real  0m0.007s
+    user  0m0.005s
+    sys   0m0.001s
+
+    sfrobu: 
+    real    0m0.059s
+    user    0m0.005s
+    sys	    0m0.053s
+10,000 Lines: 
+    sfrob:
+    real    0m0.062s
+    user    0m0.056s
+    sys	    0m0.002s
+
+    sfrobu:
+    real    0m0.579s
+    user    0m0.067s
+    sys	    0m0.508s
+
+100,000 lines
+  sfrob:
+  real	0m2.107s
+  user	0m0.578s
+  sys	0m0.053s
+
+  sfrobu:
+  real	0m6.000s
+  user	0m0.723s
+  sys	0m5.224s
+
+Between sfrob and sfrobu, sfrob is much faster than sfrobu, looking at
+the 'real' time. As the file grows, sfrobu gets slower and slower, especially
+when the file is very big, as seen in the 1,000 lines results and forward.
+Estimating the number of comparisons as a function of the number of lines of
+input, n*logn [BigO of the algorithm, where my program seems to execute a loop
+n times and inside that it is looping logn times], where n is the number of inputs.  
+
+
+
+Comparing overall performance of sfrob, sfrobu, sfrobs, 
+sfrobu -f, and sfrobs -f.
+
+time ./sfrob < testingSFROBFILES.txt (one line of text)
+sfrob:
+real	0m0.002s
+user	0m0.001s
+sys	0m0.000s
+
+sfrobu:
+real	0m0.002s
+user	0m0.000s
+sys	0m0.001s
+
+sfrobs: 
+real	0m0.261s
+user	0m0.156s
+sys	0m0.138s
+
+sfrobu -f:
+real   0m0.002s
+user   0m0.000s
+sys    0m0.001s
+
+sfrobs -f:
+real   0m0.262s
+user   0m0.167s
+sys    0m0.128s
+
+(30 lines of text)
+sfrob:
+real	0m0.002s
+user	0m0.000s
+sys	0m0.001s
+
+sfrobu:
+real	0m0.004s
+user	0m0.000s
+sys	0m0.003s
+
+sfrobs:
+real	0m0.272s
+user	0m0.153s
+sys	0m0.143s
+
+sfrobu -f:
+real   0m0.007s
+user   0m0.000s
+sys    0m0.003s
+
+sfrobs -f:
+real   0m0.265s
+user   0m0.153s
+sys    0m0.144s
+
+(5,000,000 bytes file of random text)
+sfrob:
+real	0m0.002s
+user	0m0.000s
+sys	0m0.001s
+
+sfrobu:
+real	0m5.138s
+user	0m0.286s
+sys	0m4.807s
+
+sfrobs:
+real	0m2.177s
+user	0m0.403s
+sys	0m0.232s
+
+sfrobu -f:
+real   0m5.459s
+user   0m0.263s
+sys    0m5.156s
+
+sfrobs -f:
+real   0m8.351s
+user   0m7.110s
+sys    0m0.247s
+
+From these results, it shows that sfrob has significantly the fastest
+execution when running files of any amount of size. sfrobu and sfrobu -f are
+faster than sfrobs and sfrobs -f, until it runs on a large file, in
+which then sfrobs and sfrobs -f is faster than sfrobu and sfrobu -f. sfrobu and
+sfrobu -f are both very close in the amount of time. sfrobs and sfrobs -f are
+also both very close in the amount of time. 
+Overall, sfrob and sfrobs and sfrobs -f are faster than sfrobu and sfrobu -f 
+when handling large files.
