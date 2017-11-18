@@ -1,0 +1,150 @@
+tr2b.c takes in 3 arguments, the command, the FROM string, 
+and the TO string. It first checks for any errors: if there 
+are not 3 arguments, if the string lengths do not match, 
+and if there are duplicates in FROM. getchar() is used to get
+the input from standard in, using a while loop. Within the while
+loop there is a for loop that loops through the FROM string, checking
+if the getchar() character is equal to a character in FROM. If it is, 
+the flag integer is set to 1 and outputs the TO charcater, if not the
+flag integer remains 0 and outputs the inputted charcater from getchar(). 
+The flag integer is reset to 0 and it continues until EOF. 
+
+tr2u.c does the same thing as tr2b.c, except it uses read() and write()
+instead of getchar() and putchar(). I created an array called cRead with
+one element for the read function. While the read function is not a 
+negative integer, it will use a for loop to lop through FROM and checks
+if the first element of cRead is equal to an element from FROM, then the
+flag will set to 1, the first element of cRead will be set to the 
+corresponding TO character. If it is not equal, then flag is stil 0 and
+it will write out the character from cRead. flag is reset to 0 and the 
+function continues. 
+ 
+tr -dc A-Za-z0-9 </dev/urandom | head -c 5000000 > test.txt
+strace -o str2b -c ./tr2b "abc" "123" < testFile.txt
+strace -o str2u -c ./tr2u "abc" "123" < testFile.txt
+
+I used strace to test tr2b and tr2u to test when copying a file to 
+another filer and the results for each: 
+
+tr2b
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 97.54    0.078503           4     20122           write
+  2.29    0.001839           3       613           read
+  0.05    0.000044           5         9           mmap
+  0.03    0.000027           7         4           mprotect
+  0.02    0.000017           4         4           fstat
+  0.02    0.000014           7         2           open
+  0.01    0.000009           9         1           munmap
+  0.01    0.000008           8         1         1 access
+  0.01    0.000006           3         2           close
+  0.01    0.000006           6         1           execve
+  0.00    0.000004           4         1           arch_prctl
+  0.00    0.000003           3         1           brk
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.080480                 20761         1 total
+
+tr2u
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 57.83   24.788716           5   5000000           write
+ 42.17   18.072880           4   5000002           read
+  0.00    0.000019           3         7           mmap
+  0.00    0.000013           3         4           mprotect
+  0.00    0.000007           4         2           open
+  0.00    0.000005           5         1           munmap
+  0.00    0.000003           2         2           close
+  0.00    0.000003           3         1         1 access
+  0.00    0.000003           3         1           execve
+  0.00    0.000002           1         2           fstat
+  0.00    0.000001           1         1           brk
+  0.00    0.000001           1         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   42.861653              10000024         1 total
+
+This shows that tr2b is faster than tr2u. tr2b had 20761 system calls and 
+of those, 20122 writes and 613 reads, while tr2u had 10000024 system calls 
+and of those, 5000000 writes and 5000002 reads.This makes sense, because 
+tr2u is is an unbuffered I/O and unbuffered I/O is slower when making
+the read() and write() function calls for every byte. tr2b is faster, 
+because it uses a buffered I/O with getchar() and putchar(), getting
+multiple bytes simultaneously, then the first character is returned 
+from the buffer to the calling rotuine and for writing, the buffer
+writes data that is gathered in a buffer in memory until the buffer 
+is full, then it is written to th device all at once. This reduces
+the number of system calls and makes it faster.  
+
+I used strace to test tr2b and tr2u copying a file to the terminal:
+
+tr2b
+ time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 97.69    0.061922           3     20122           write
+  2.31    0.001464           2       613           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         4           fstat
+  0.00    0.000000           0         9           mmap
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.063386                 20761         1 total
+
+
+tr2u
+ time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 54.92   21.854277           4   5000000           write
+ 45.08   17.937081           4   5000002           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           fstat
+  0.00    0.000000           0         7           mmap
+  0.00    0.000000           0         4           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00   39.791358              10000024         1 total
+
+This gave the same system calls and write and read calls as when copying 
+it to another file, showing that tr2b is still faster than tr2u. 
+
+time ./tr2b "abcd" "####" < testFile.txt > resultstr2b.txt
+time ./tr2u "abcd" "####" < testFile.txt > resultstr2u.txt
+time ./tr2b "abcd" "####" < testFile.txt
+time ./tr2u "abcd" "####" < testFile.txt
+
+I used the 'time' command to measure how much faster one program is when copying
+the same amount of data. 
+
+To another file: 
+tr2b 
+real 0m0.386s
+user 0m0.219s
+sys  0m0.005s
+
+tr2u
+real	0m5.776s
+user	0m0.373s
+sys	0m5.309s
+
+To the terminal:
+tr2b
+real	0m1.633s
+user	0m0.253s
+sys	0m0.074s
+
+tr2u
+real	0m5.282s
+user	0m0.403s
+sys	0m4.845s
+
+The time command shows that tr2b stil takes a shorter amount of time than tr2u,
+for the same reason tr2b is faster than tr2u in the strace example.  
