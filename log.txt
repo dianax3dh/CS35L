@@ -1,0 +1,54 @@
+export PATH=/usr/local/cs/bin:$PATH to get current version of
+GNU coreutils
+
+ran sort --version to make sure I am using a new-enough version.
+I am using GNU coreutils 8.28. 
+
+To generate a file containing 10,000,000 random single-precision
+floating point numbers, in text form, one per line no white space:
+od -An -t fF -N 40000000  < /dev/urandom | tr -s ' ' '\n' > 
+randomTenThousad.txt
+
+-An to get rid of input offest
+-t fF for single-precision floating point numbers
+-N 40,000,000 formates no more than "count" bytes of input for 
+   10,000,000 single-precision floating point
+   each floating point is 4 bytes
+sed s/' '/\n/g to change white spaces into new lines
+
+Used time -p to time command sort -f on data, with output sent to /dev/null:
+
+/usr/bin/time -p sort -g randomTenThousand.txt > /dev/null
+real 22.27
+user 118.01
+sys 0.44
+
+I used sort --help and read how to use --parallel; it's --parallel=N.
+To make sure my PATH environment is set properly so that /usr/local/cs/bin
+is at its start:
+/usr/bin/time -p /usr/local/cs/bin/sort -g --parallel=1 
+randomTenThousand.txt > /dev/null
+real 102.62
+user 102.43
+sys 0.19
+
+/usr/bin/time -p /usr/local/cs/bin/sort -g --parallel=2
+randomTenThousand.txt > /dev/null
+real 54.48
+user 103.42
+sys 0.27
+
+/usr/bin/time -p /usr/local/cs/bin/sort -g --parallel=4
+randomTenThousand.txt > /dev/null
+real 32.67
+user 109.48
+sys 0.35
+
+/usr/bin/time -p /usr/local/cs/bin/sort -g --parallel=8
+randomTenThousand.txt > /dev/null
+real 21.00
+user 113.88
+sys 0.45
+
+The result from this is that the more number of threads, the faster
+the real time, but the longer the user time and system time.
