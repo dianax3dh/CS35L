@@ -1,0 +1,52 @@
+ssh onto seasnet
+
+gpg --gen-key 
+    chose default option 1
+    RSA and RSA
+
+keysize: 2048
+Keys do not expire.
+
+Diana Hoang (HW7) <dnhoang@g.ucla.edu>
+Passphrase: hello123
+
+To create entropy find / >/dev/null 
+
+gpg --armor --output hw-pubkey.asc --export Diana Hoang
+To export public key, in ASCII format into hw-pubkey.asc
+
+tar -cd hw.tar
+gzip hw.tar
+gpg --armor --output hw.tar.gz.sig --detach-sign hw.tar.gz
+
+
+1. If the other teams had been observing all the bytes going across the 
+network, my resulting network should still be secure. It will still be
+secure, because of the public and private keys used between the server and
+client. Between the public and the private keys and the client and the server,
+the bytes going across the network is encrypted and the private key is needed
+to decrypt. In other words, the sender will use the receiver's public key to
+encrypt the bytes and the one with the private key will decrpyt the data. 
+(1) Assuming the other teams had also tapped our keyboards and observed all
+of our team's keystrokes, then our resulting network would no longer be secure.
+When observing our keystrokes, they may have observed when we typed in the 
+username and passphrase of the client. By tapping into our keyboards and 
+observing our keystrokes, the encryption and the private key would no longer
+be as useful, because they will already know what our original typed phrase/
+passphrase is from the keystrokes. 
+(2)If I am booting off USB and I assume the other teams temporarily had pysical
+control of the USB, my resulting network would not be secure, because access
+to the USB would mean access to the public and private keys, which would mean
+they would have had the chance to use the public and private keys to encrypt 
+anything between the sender and receiver. 
+
+2. The gpg --verify command in the following instructions doesn't really
+verify that I personally created the tar file in the question, because
+there is no way of telling if I personally created the signature public key
+to the tar file. It can be tampered by someone else who has access to my 
+laptop at the moment. The gpg --verfiy command does not know for sure who's
+signature is whose; it only cares about checking whether the signatures match.
+A way to fix the problem is to use a trusted third party certificate 
+verification. The third party will be able to keep track of what is happening,
+so if someone were to intercept and sabotage, the third party will notice 
+that change. 
