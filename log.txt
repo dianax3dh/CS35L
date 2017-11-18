@@ -1,0 +1,75 @@
+To startup BeagleBone, I began with following the instructions
+posted on piazza by the TA. 
+
+ifconfig
+inet addr:10.97.85.19
+
+sudo apt-get install openssh-server openssh-client
+After connecting my BeagleBone to the Wifi, I installed OpenSSH.
+
+ssh-keygen
+To generate keys.
+   -created directoy '/root/.ssh'
+   -saved into (/root/.ssh/id_rsa)
+   -enter passphrase: hello1
+
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+0f:36:54:9b:20:b5:0d:70:d5:c3:bf:77:90:92:ad:11 root@beaglebone
+The key's randomart image is:
++---[RSA 2048]----+
+|      oo=.oo     |
+|       o * oE    |
+|        o +  * . |
+|       .    + =  |
+|        S    + o |
+|       . +  . . o|
+|          .    ..|
+|                 |
+|                 |
++-----------------+
+
+sudo useradd -d -m /home/al al
+-m creates a new user without creating any home directory for that user
+-d followed by full path for desired new home directory 
+
+sudo passwd al
+creates a password for the directory
+password: al123
+
+cd /home/al 
+cd into the directory
+
+sudo mkdir .ssh
+creates .ssh directory 
+
+sudo chown -R al .ssh
+changes owner of directory to "root" 
+-R recursively changes ownership of directories and their contents
+
+sudo chmod 700 .ssh
+700 lets the owner read, write, and execute in .ssh directory 
+
+Al's inet addr:  10.97.85.20
+ssh-copy-id -i diana@10.97.85.20
+eval `ssh-agent -s`
+ssh-add
+
+sudo apt-get install xterm
+To install xterm
+
+ssh -X diana@10.97.85.20
+    -X to use xterm
+
+xterm
+  Al checks using ps -aux | grep diana and sees that I am running xterm
+
+When I checked to see if Al is running xterm and it works:
+al        1806  0.6  0.8   7452  4172 pts/9    S+   01:05   0:00 xterm
+
+
+
+
+
+
