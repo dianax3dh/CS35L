@@ -1,0 +1,179 @@
+wget http://web.cs.ucla.edu/classes/fall17/cs35L/
+assign/coreutils-with-bug.tar.gz
+     Downloaded coreutils-with-bug.tar.gz
+
+tar -xzvf coreutils-with-bug.tar.gz
+
+cd coreutils-with-bug.tar.gz
+
+./configure
+
+make
+I get this error after running ‘make’:
+In file included from utimecmp.c:41:0:
+utimens.h:2:5: error: conflicting types for 'futimens'
+ int futimens (int, char const *, struct timespec const [2]);
+    ^
+In file included from utimecmp.h:25:0,
+                 from utimecmp.c:25:
+/usr/include/sys/stat.h:373:12: note: previous declaration 
+of 'futimens' was here
+ extern int futimens (int __fd, const struct timespec
+ __times[2]) __THROW;
+            ^
+make[3]: *** [utimecmp.o] Error 1
+make[3]: Leaving directory `/w/home.07/class/classdho/
+coreutils-with-bug/lib'
+make[2]: *** [all] Error 2
+make[2]: Leaving directory `/w/home.07/class/classdho/
+coreutils-with-bug/lib'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory `/w/home.07/class/classdho/
+coreutils-with-bug'
+make: *** [all] Error 2
+
+wget http://web.cs.ucla.edu/classes/fall17/cs35L/assign/coreutils.diff
+     To build get the renaming patch.
+
+patch -p0 < coreutils.diff
+      It gives out this:
+      patching file lib/utimens.c
+      patching file lib/utimens.h
+      patching file src/copy.c
+      patching file src/tee.c
+      patching file src/touch.c
+
+./configure
+	.mConfigure again after the patch.
+
+make
+    'make' again after the patch
+    It now works. When building it as-is, there was an error with 
+utimecmp.o. The renaming patch changed futimens to coreutils_futimens 
+and tee to coreutils_tee, as seen in the coreutils.diff code. The renaming
+fixed the error, because there is no longer conflicting types. 
+
+tmp=$(mktemp -d)
+cd $tmp
+touch -d '1918-11-11 11:00 GMT' wwi-armistice
+touch now
+sleep 1
+touch now1
+TZ=UTC0 ls -lt --full-time wwi-armistice now now1
+	To reproduce the bug.
+resulted in:
+-rw-r--r-- 1 classdho class 0 2017-10-25 00:21:21.243806571 
++0000 now1
+-rw-r--r-- 1 classdho class 0 2017-10-25 00:21:08.755468328 
++0000 now
+-rw-r--r--ts 1 classdho class 0 1918-11-11 11:00:00.000000000 
++0000 wwi-armistice 
+This is wrong, so I tried again.
+
+tmp=$(mktemp -d)
+cd $tmp
+touch -d '1918-11-11 11:00 GMT' wwi-armistice
+touch now
+sleep 1
+touch now1
+[classdho@lnxsrv07 ~/coreutils-with-bug/src]$ TZ=UTC0 ./ls -lt --full-time $tmp/wwi-armistice $tmp/now $tmp/now1
+     This resulted in: 
+-rw-r--r-- 1 classdho class 0 1918-11-11 11:00:00.000000000 +0000 /tmp/tmp.gVC1FRm10z/wwi-armistice
+-rw-r--r-- 1 classdho class 0 2017-10-25 00:28:57.155155123 +0000 /tmp/tmp.gVC1FRm10z/now1
+-rw-r--r-- 1 classdho class 0 2017-10-25 00:27:49.208314657 +0000 /tmp/tmp.gVC1FRm10z/now
+
+Debugging:
+In the coreutils-with-bug directory, I cd src, then ls
+the src, because src is where I ran the patch and it worked. 
+I then look through ls.c and noticed that there is a function 
+called 'sort_files'; I assumed that this function is the one that
+sorts the files and outputs it. Looking at the 'sort_files' function,
+with gdb, I noticed that functions 'qsort' was being called. I put
+another breakpoint at 'qsort' and ran it again. This time I noticed
+other functions were also being called asides from 'qsort', which is 
+'compare_mtime'. Debugging through this time, I cam across:
+
+timespec_cmp (b=..., a=...) at ../lib/timespec.h:48
+48	       int diff = a.tv_sec - b.tv_sec;
+49	         return diff ? diff : a.tv_nsec - b.tv_nsec;
+
+From this step, I noticed that the int diff being calculated is related to
+the timespec_cmp, which I assumed to be related to how the timestamps are 
+interpreted. 
+I then tried to print out the values for a.tv_sec, b.tv_sec, and diff. 
+print diff: $1 = 3
+print a.tv_sec: $2 = <optimized out>
+print b.tv_sec: $3 = <optimized out> 
+I looked up how to view optimized out values, leading me to go back and change
+the CFLAGS of coreutils-with-bug Makefile to -O0, ./configure, and make again. 
+After doing this, I printed out the values again.
+print diff: $1 = 0
+print a.tv_sec: $2 = 1126300188
+print b.tv_sec: $3 = 1131101910
+This shows some kind of integer overflow, because 1126300188 - 1131101910 
+is not 0. 
+
+I continued to debug and noticed the line:
+cmp_mtime (a=0x62d260, b=0x62d470, cmp=0x405a00 <xstrcoll>) at ls.c:2880
+2880	    int diff = timespec_cmp (get_stat_mtime (&b->stat),
+I looked into timespec_cmp and timespec.h from the previous output above. 
+I went back go coreutils-with-bug directory and then to 'lib' to find the file
+for timespec.h. 
+I found that timespec_cmp returns a negative, zero, or positive based on if 
+A < B, A == B, or A > B, respectively. 
+
+Then I constructed a new ptach file called 'lab4.diff' containing my coreutil
+fixes in the form of a ChangeLog entry, followed by a diff -u patch. 
+
+
+cd src
+ls
+emacs ls.c
+C-s sort-files
+gdb ./ls in the src directory in coreutils-with-bug
+break sort_files
+run -lt
+break qsort
+run -lt
+break compare_mtime
+run -lt
+
+cd coreutils-with-bug
+./configure CFLAGS="-g -O0"
+make
+
+cd .. (back to coreutils-with-bug)
+cd lib
+ls 
+less time_spec.h 
+
+cp timespec.h mytimespec.h
+C-x 4 a in emacs
+diff -u timespec.h mytimespec.h > lab4.diff
+patch < lab4.diff
+
+I reran everything and the result outputtted wwi-armistice where it is suppose
+to be - at the bottom. 
+[classdho@lnxsrv07 /tmp/tmp.j3I95AWZ27]$ TZ=UTC0 ls -lt --full-time 
+wwi-armistice now now1
+-rw-r--r-- 1 classdho class 0 2017-10-27 07:49:02.832815055 +0000 now1
+-rw-r--r-- 1 classdho class 0 2017-10-27 07:48:56.953655857 +0000 now
+-rw-r--r-- 1 classdho class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+
+Reproducing the bug in home directory on SEASnet Linux: 
+touch -d '1918-11-11 11:00 GMT' wwi-armistice
+touch now
+sleep 1
+touch now1
+TZ=UTC0 ls -lt --full-time wwi-armistice now now1
+After doing the above to reproduce the bug, it output:
+-rw-r--r-- 1 classdho class 0 2054-12-17 17:28:16.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 classdho class 0 2017-10-26 22:20:52.703531000 +0000 now1
+-rw-r--r-- 1 classdho class 0 2017-10-26 22:20:46.945109000 +0000 now
+
+
+Inseatd of changing the wwi-armistice to the date 1918-11-11 11:00:00....
+It changed it to in the far future, 2054-12-17 17:28:16....
+SEASnet is 64 bit and wwi-armistice is 32 bit. When the files are saved, it is
+truncated, therefore overflow overs, making SEASnet think that the files are
+a different date than they really are. 
