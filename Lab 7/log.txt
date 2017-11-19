@@ -5,10 +5,10 @@ ifconfig
 inet addr:10.97.85.19
 
 sudo apt-get install openssh-server openssh-client
-After connecting my BeagleBone to the Wifi, I installed OpenSSH.
+     After connecting my BeagleBone to the Wifi, I installed OpenSSH.
 
 ssh-keygen
-To generate keys.
+   To generate keys.
    -created directoy '/root/.ssh'
    -saved into (/root/.ssh/id_rsa)
    -enter passphrase: hello1
@@ -31,41 +31,58 @@ The key's randomart image is:
 +-----------------+
 
 sudo useradd -d -m /home/al al
--m creates a new user without creating any home directory for that user
--d followed by full path for desired new home directory 
+     -m creates a new user without creating any home directory for that user
+     -d followed by full path for desired new home directory 
 
 sudo passwd al
-creates a password for the directory
-password: al123
+     creates a password for the directory
+     password: al123
 
 cd /home/al 
-cd into the directory
+   cd into the directory
 
 sudo mkdir .ssh
-creates .ssh directory 
+   creates .ssh directory 
 
 sudo chown -R al .ssh
-changes owner of directory to "root" 
--R recursively changes ownership of directories and their contents
+   changes owner of directory to "root" 
+   -R recursively changes ownership of directories and their contents
 
 sudo chmod 700 .ssh
-700 lets the owner read, write, and execute in .ssh directory 
+   700 lets the owner read, write, and execute in .ssh directory 
 
 Al's inet addr:  10.97.85.20
+
 ssh-copy-id -i diana@10.97.85.20
+   copies my public key onto the server (Al's server) 
+
 eval `ssh-agent -s`
+   To get authentication authorization 
+   ssh-agent holds private keys used for public key authentication
+   -s generates bourne shell commands on stdout
+
 ssh-add
+   So that you do not need to enter in the passprase everytime you SSH to the
+   server. 
 
 sudo apt-get install xterm
-To install xterm
+   To install xterm
+
+I installed Xquartz inorder for xterm to work, as told by the TA.
 
 ssh -X diana@10.97.85.20
-    -X to use xterm
 
 xterm
+  To get a shell window
   Al checks using ps -aux | grep diana and sees that I am running xterm
 
-When I checked to see if Al is running xterm and it works:
+Al did the same steps as I did above for me to check if he was running
+xterm; we reversed the roles. I was now the server and he was the client.
+For me to check if Al was running xterm, I did:
+ps -aux | grep al 
+
+The result of that shows that Al was running xterm, while connected to my
+server:
 al        1806  0.6  0.8   7452  4172 pts/9    S+   01:05   0:00 xterm
 
 
