@@ -1,0 +1,8 @@
+After following the instructions and running gitk,
+a window popped up. The subwindows in the screenshot:
+the top window shows the commits that have been made, by who, 
+and when it was made. You can look at each commit in detail by 
+clicking on it and it will show in the bottom window. The left
+bottom window shows the detail of the commit in diff format
+and the right bottom window shows the comments for that commit, which
+contains the files that the commit affected.

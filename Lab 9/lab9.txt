@@ -1,0 +1,179 @@
+1. Get a copy of Diffutils repository, in Git format: 
+	git clone git://git.savannah.gnu.org/diffutils.git
+
+2. Get log of changes to Diffutils' master branch using "git log"
+	and put into file git-log.txt.
+	cd diffutils
+	git log > git-log.txt
+
+3. Generate list of tags used for Diffutils using "git tag" and put
+	into file git-tags.txt
+	git tag > git-tags.txt
+
+4. find "maint: quite 'like this' or "like this", not `like this'" " 
+	and generate patch for that commit, putting into quote-patch.txt
+	emacs git-log.txt
+	C-s maint: quote 
+		Found the commit: commit 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f
+	git format-patch -1 --stdout 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f >
+	quote-patch.txt
+
+5. Check out version 3.0 of Diffutils from my repository
+	git checkout v3.0
+
+6. use patch to apply quote-patch.txt to version 3.0 
+	patch -p1 < quote-patch.txt
+	RETURN (3x) to skip past typing in what file to patch
+		There were hunks that failed and were ignored, but there were
+		a lot that succedded as well.
+
+7. use git status to get overview of what happened
+	git status 
+		# On branch myrep.0
+		# Changes not staged for commit:
+		#   (use "git add <file>..." to update what will be committed)
+		#   (use "git checkout -- <file>..." to discard changes in working directory)
+		#
+		#	modified:   NEWS
+		#	modified:   README
+		#	modified:   TODO
+		#	modified:   doc/diagmeet.note
+		#	modified:   ms/config.bat
+		#	modified:   ms/config.site
+		#	modified:   po/en.po
+		#	modified:   src/analyze.c
+		#	modified:   src/cmp.c
+		#	modified:   src/context.c
+		#	modified:   src/diff.c
+		#	modified:   src/diff.h
+		#	modified:   src/diff3.c
+		#	modified:   src/dir.c
+		#	modified:   src/ifdef.c
+		#	modified:   src/io.c
+		#	modified:   src/sdiff.c
+		#	modified:   src/side.c
+		#	modified:   src/system.h
+		#	modified:   src/util.c
+		#	modified:   tests/help-version
+		#
+		# Untracked files:
+		#   (use "git add <file>..." to include in what will be committed)
+		#
+		#	NEWS.orig
+		#	README-hacking.orig
+		#	README-hacking.rej
+		#	README.orig
+		#	README.rej
+		#	cfg.mk.orig
+		#	cfg.mk.rej
+		#	git-log.txt
+		#	git-tags.txt
+		#	ms/config.site.orig
+		#	quote-patch.txt
+		#	src/cmp.c.orig
+		#	src/context.c.orig
+		#	src/diff.c.orig
+		#	src/diff.c.rej
+		#	src/diff.h.orig
+		#	src/diff3.c.orig
+		#	src/diff3.c.rej
+		#	src/dir.c.orig
+		#	src/sdiff.c.orig
+		#	src/system.h.orig
+		#	src/util.c.orig
+		#	tests/help-version.orig
+		no changes added to commit (use "git add" and/or "git commit -a")
+
+8. use Emacs functions vc-diff (C-x v =) and vc-revert (C-x v u)
+	C-x v = finds changes 
+	C-x v u revert changes 
+9. Revert all changes to files other than .c files.undo all changes to .c
+	files other than changes to character string constants. 
+	Used emacs to open files from "Changes not stagged for commit"
+		emacs NEWS
+		C-x v = C-x v u
+		yes
+		emacs README
+		C-x v = C-x v u
+		yes
+		emacs TODO
+		C-x v = C-x v u
+		yes
+		emacs doc/diagmeet.note 
+		C-x v = C-x v u
+		yes
+		emacs ms/config.bat 
+		C-x v = C-x v u
+		yes
+		emacs ms/config.site
+		C-x v = C-x v u
+		yes
+		emacs po/en.po 
+		C-x v = C-x v u
+		yes
+		emacs src/diff.h
+		C-x v = C-x v u
+		yes
+		emacs src/system.h
+		C-x v = C-x v u
+		yes
+		emacs tests/help-version
+		C-x v = C-x v u
+		yes
+
+	To change the .c files, I went into src and used C-x v = on the .c that were applicable of using that. Then C-c C-a to apply hunk to the file, which in this case undoes the hunk. I did this for the sections that were in comments and not functions. 
+
+10. use Emacs to examine files src/*.c.rej and copy rejected patches into 	  corresponding .c files 
+	cd src 
+	look through the .c.rej files, opened up those files and their original .c files and did the change manually to the commented ones
+		src/diff.c
+		src/diff3.c
+
+11. Remove all untracked files that git status warns about. 
+	git clean -n 
+		shows what will be deleted
+	git clean -f
+		deletes the files
+
+12. git status should report half-dozen modified files
+		#	modified:   cmp.c
+		#	modified:   diff.c
+		#	modified:   diff3.c
+		#	modified:   dir.c
+		#	modified:   sdiff.c
+		#	modified:   util.c
+	git diff should output patch; put oatch into quote-3.0-patch.txt
+		git diff > quote-3.0-patch.txt
+
+13. back to Diffutils directory 
+	export PATH=$PATH:/usr/local/cs/bin
+	./bootstrap
+	Did the extra patch for lnxsrv07; patch -p1 < extraPatch.txt
+	./configure
+	make 
+	make clean
+	To verify it worked:
+		 diff . -
+			diff: cannot compare '-' to a directory
+		 diff --help
+		 	 Cheked that the marks were correct, meaning ' was used
+
+14. Sanity test using modified version of Diffutils I built by using 
+	just-built diff to compare source code of Diffutils 3.0 to source
+	code of my modified version. 
+	cp -r diffutils diffutils-3.0
+		-r recursively copies directories and content in diffutils to diffutils-3.0 
+	cd diffutils-3.0
+	git checkout 'v3.0'
+	git log > git-log.txt
+		To check if it correctly changed to version 3.0
+	cp -r diffutils diffutils-3.0-patch
+	diff -pru diffutils-3.0 diffutils-3.0-patch >quote-3.0-test.txt
+
+15. Comparing quote-3.0-test.txt and quote-3.0-patch.txt the files are not
+	identical and the differences are innocuous (harmful), because the changes
+	dealt with changes to displayed characters and not any functions. 
+		diff quote-3.0-test.txt quote-3.0-patch.txt
+
+
+

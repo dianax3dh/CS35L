@@ -1,0 +1,52 @@
+1.Homework 9 Log
+
+2. check out version 3.0 Diffutils from my rep into a new branch "quote"
+	 git checkout v3.0 -b quote
+		M	src/cmp.c
+		M	src/diff.c
+		M	src/diff3.c
+		M	src/dir.c
+		M	src/sdiff.c
+		M	src/util.c
+		Switched to a new branch 'quote
+
+3. Install change into new branch; run patch with quote-3.0-patch.txt
+	patch -p1 < quote-3.0-patch.txt
+
+4. Learn to use C-x 4 a
+	add-change-log-entry-other-window
+		adds new entry to change log file for the file you are editing
+5. emacs each of the 6 .c files and added to the ChangeLog
+	C-x 4 a
+
+6. Commit changes to new branch, use ChangeLog entry as commit message
+	git add src/cmp.c src/diff.c src/diff3.c src/dir.c src/sdiff.c src/util.c
+	git commit -F ChangeLog
+
+7. git format-patch -1 --stdout > formatted-patch.txt
+
+8. My partner was Michelle Duan. 
+   Her patch file is named formatted-patchMichelle.txt
+   Check out v3.0 into a new branch, "partner"
+   	git checkout v3.0 -b partner
+   	git am < formatted-patchMichelle.txt
+   	The output: 
+   		Applying 2017-12-03 Michelle Jane Duan <michelld@lnxsrv05.seas.ucla.edu> 
+   	./bootsrap 
+   	get extra patch
+   	./configure
+   	make
+   	make check
+   	make distdir 
+   		chmod -R a+r "diffutils-3.0.1-8510"
+
+9. cd diffutils* 
+   	  less ChangeLog
+   	  	I went through Michelle's ChangeLog and saw that it is the same as the ones she has written.
+
+ 10. Download Xquartz
+ 	 ssh -X classdho@lnxsrv07.seas.ucla.edu
+ 	 export PATH=$PATH:/usr/local/cs/bin
+ 	 cd ~eggert/src/gnu/emacs
+ 	 gitk
+ 	 Screenshot of the window that popped up after gitk.
